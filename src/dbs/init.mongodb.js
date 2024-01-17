@@ -29,5 +29,3 @@ class Database {
 
 const instanceMongodb = Database.GetInstance();
 module.exports = instanceMongodb;
-
-module.exports = Database;

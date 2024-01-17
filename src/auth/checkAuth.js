@@ -5,7 +5,7 @@ const { ForbiddenRequestError } = require('../core/error.response');
 
 const headers = {
   API_KEY: 'x-api-key',
-  AUTHORIZATION: 'authorization',
+  AUTHORIZATION: 'Authorization',
 };
 
 const apiKey = async (req, res, next) => {
@@ -46,8 +46,4 @@ const permission = (permission) => {
   };
 };
 
-const asyncHandler = (fn) => (req, res, next) => {
-  fn(req, res, next).catch(next);
-};
-
-module.exports = { apiKey, permission, asyncHandler };
+module.exports = { apiKey, permission };

@@ -13,10 +13,10 @@ class SuccessResponse {
   constructor({
     message,
     statusCode = StatusCode.OK,
-    reason = ReasonStatusCode.OK,
+    reasonStatusCode = ReasonStatusCode.OK,
     metadata = {},
   }) {
-    this.message = !message ? ReasonStatusCode : message;
+    this.message = !message ? reasonStatusCode : message;
     this.statusCode = statusCode;
     this.metadata = metadata;
   }
@@ -48,4 +48,5 @@ class CREATED extends SuccessResponse {
 module.exports = {
   OK,
   CREATED,
+  SuccessResponse,
 };
