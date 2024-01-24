@@ -57,7 +57,7 @@ const authentication = asyncHandler(async (req, res, next) => {
   }
 });
 
-const authenticationV2 = asyncHandler(async (req, res, next) => {
+const authenRefreshToken = asyncHandler(async (req, res, next) => {
   const userId = req.headers[headers.CLIENT_ID]?.toString();
   console.log('userId', userId);
   if (!userId) {
@@ -93,6 +93,6 @@ const verifyToken = async (token, keySecret) => {
 module.exports = {
   createTokenPair,
   authentication,
-  authenticationV2,
+  authenRefreshToken,
   verifyToken,
 };

@@ -2,19 +2,77 @@
 
 const { product, clothing, electronic } = require('../models/product.model');
 const { BadRequestError } = require('../core/error.response');
+const {
+  findAllDraftsForShop,
+  findAllPublishForShop,
+  publishProductByShop,
+  unPublishProductByShop,
+  searchProductByUser,
+  findAllProduct,
+  findProduct,
+} = require('../models/repositories/product.repository');
 
 // define Factory class to create product
 
 class ProductFactory {
+  static productType = {};
+
+  static registerProductType(type, classRef) {
+    this.productType[type] = classRef;
+  }
+
   static async createProduct(type, payload) {
-    switch (type) {
-      case 'Electronics':
-        return new Electronics(payload).createProduct();
-      case 'Clothing':
-        return new Clothing(payload).createProduct();
-      default:
-        throw new BadRequestError(`Invalid Product Types  ${type}`);
+    //  switch (type) {
+    //    case 'Electronics':
+    //      return new Electronics(payload).createProduct();
+    //    case 'Clothing':
+    //      return new Clothing(payload).createProduct();
+    //    default:
+    //      throw new BadRequestError(`Invalid Product Types  ${type}`);
+    //  }
+
+    const productClass = this.productType[type];
+    if (!productClass) {
+      throw new BadRequestError(`Invalid Product Types  ${type}`);
     }
+    return new productClass(payload).createProduct();
+  }
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true };
+    return await findAllDraftsForShop({ query, limit, skip });
+  }
+  static async publishProductByShop({ product_shop, product_id }) {
+    return await publishProductByShop({ product_shop, product_id });
+  }
+
+  static async unPublishProductByShop({ product_shop, product_id }) {
+    return await unPublishProductByShop({ product_shop, product_id });
+  }
+
+  static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isPublished: true };
+    return await findAllPublishForShop({ query, limit, skip });
+  }
+  static async searchProducts({ keySearch }) {
+    return await searchProductByUser({ keySearch });
+  }
+
+  static async findAllProduct({
+    limit = 50,
+    sort = 'ctime',
+    page = 1,
+    filter = { isPublished: true },
+  }) {
+    return await findAllProduct({
+      limit,
+      sort,
+      page,
+      filter,
+      select: ['product_name', 'product_thumb', 'product_price'],
+    });
+  }
+  static async findProduct({ product_id }) {
+    return await findProduct({ product_id, unSelect: ['__v'] });
   }
 }
 
@@ -77,5 +135,7 @@ class Electronics extends Product {
     return newProduct;
   }
 }
+ProductFactory.registerProductType('Clothing', Clothing);
+ProductFactory.registerProductType('Electronics', Electronics);
 
 module.exports = ProductFactory;
